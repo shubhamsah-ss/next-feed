@@ -1,6 +1,7 @@
 "use client";
 
 import MessageCard from "@/components/MessageCard";
+import SendMessage from "@/components/SendMessage";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/use-toast";
@@ -136,59 +137,66 @@ const Dashboard = () => {
   if (!session || !session?.user) return;
 
   return (
-    <div className="my-8 lg:mx-auto p-6 bg-white rounded w-full max-w-6xl">
-      <h1 className="text-4xl font-bold mb-4">User Dashboard</h1>
-      <div className="mb-4">
-        <h3 className="text-lg font-semibold mb-2 mx-3">
-          Copy your unique link
-        </h3>
-        <div className="flex items-center">
-          <input
-            type="text"
-            value={profileUrl}
-            disabled
-            readOnly
-            className="input input-bordered bg-white w-full p-3"
-          />
-          <Button onClick={copyToClipboard}>Copy</Button>
+    <div className="lg:mx-auto p-6 w-full max-w-6xl space-y-10">
+      <h1 className="text-4xl font-bold">User Dashboard</h1>
+        <div>
+          <h3 className="text-lg font-semibold mx-3">
+            Copy your unique link
+          </h3>
+          <div className="flex items-center">
+            <input
+              type="text"
+              value={profileUrl}
+              disabled
+              readOnly
+              className="input input-bordered bg-white w-full p-3"
+            />
+            <Button onClick={copyToClipboard}>Copy</Button>
+          </div>
         </div>
-        <div className="mb-4">
-          <Switch
-            {...register("acceptMessages")}
-            checked={acceptMessages}
-            onCheckedChange={handleSwitchChange}
-            disabled={isSwitchLoading}
-          />
-          <span className="ml-2">
-            Accept Messages: {acceptMessages ? "On" : "Off"}
-          </span>
-        </div>
+          <div className="flex items-center">
+            <Switch
+              {...register("acceptMessages")}
+              checked={acceptMessages}
+              onCheckedChange={handleSwitchChange}
+              disabled={isSwitchLoading}
+            />
+            <span className="ml-2">
+              Accept Messages: {acceptMessages ? "On" : "Off"}
+            </span>
+          </div>
         <Separator />
 
-        <Button
-          className="mt-4"
-          variant="outline"
-          onClick={(e) => {
-            e.preventDefault();
-            fetchMessages(true);
-          }}
-        >
-          {loading ? <Loader2 className="animate-spin" /> : <RefreshCcw />}
-        </Button>
-        <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-6">
-          {messages.length > 0 ? (
-            messages.map((message) => (
-              <MessageCard
-                key={message._id}
-                message={message}
-                onMessageDelete={handleDeleteMessage}
-              />
-            ))
-          ) : (
-            <p>No message to display.</p>
-          )}
+        <div className="flex justify-between items-center">
+          <Button
+            variant="outline"
+            onClick={(e) => {
+              e.preventDefault();
+              fetchMessages(true);
+            }}
+          >
+            {loading ? <Loader2 className="animate-spin" /> : <RefreshCcw />}
+          </Button>
+          <SendMessage />
         </div>
-      </div>
+        <div className="space-y-3">
+          <h3 className="text-2xl font-semibold">
+            Your Messages
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {messages.length > 0 ? (
+              messages.map((message) => (
+                <MessageCard
+                  key={message._id}
+                  message={message}
+                  onMessageDelete={handleDeleteMessage}
+                />
+              ))
+            ) : (
+              <p>No message to display.</p>
+            )}
+          </div>
+        </div>
     </div>
   );
 };
