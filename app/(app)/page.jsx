@@ -19,14 +19,29 @@ import { Input } from "@/components/ui/input";
 
 import messages from "@/data/messages.json";
 import dateFormat from "@/lib/dateFormat";
+import isUsername from "@/lib/isUsername";
+import isValidUrl from "@/lib/isValidUrl";
 import emblaCarouselAutoScroll from "embla-carousel-auto-scroll";
-import { Search } from "lucide-react";
+import { Send } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 const Home = () => {
+  const form = useForm();
+  const [searchInput, setSearchInput] = useState("");
+  const router = useRouter();
 
-  const form = useForm()
+  const handleSearch = () => {
+    console.log(searchInput);
+    const input = searchInput.trim();
+    if (isValidUrl(input)) router.push(input);
+    else if (isUsername(input)) {
+      const username = input.slice(1);
+      router.push(`/u/${username}`);
+    }
+  };
 
   return (
     <main
@@ -78,20 +93,25 @@ const Home = () => {
           </DialogTrigger>
           <DialogContent className="rounded-md max-w-sm md:w-full md:max-w-lg">
             <DialogHeader>
-              <DialogDescription>
-                Paste profile link or @username
-              </DialogDescription>
+              <DialogDescription>Profile link or @username</DialogDescription>
             </DialogHeader>
             <div className="flex flex-col md:flex-row gap-2 items-center space-x-2">
               <div className="grid flex-1 gap-2">
                 <Input
                   id="search"
                   name="search"
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  value={searchInput}
                 />
               </div>
-              <Button type="submit" size="sm" className="px-3">
-                <Search className="h-4 w-4 mr-2" />
-                <span className="">Search</span>
+              <Button
+                onClick={() => handleSearch()}
+                type="submit"
+                size="sm"
+                className="px-3"
+              >
+                <Send className="h-4 w-4 mr-2" />
+                <span className="">Send</span>
               </Button>
             </div>
           </DialogContent>
